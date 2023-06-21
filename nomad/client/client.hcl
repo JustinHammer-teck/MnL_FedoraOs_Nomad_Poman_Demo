@@ -1,6 +1,6 @@
 log_level= "DEBUG"
-data_dir = "/home/eugene/nomad-client-data"
-plugin_dir = "/home/eugene/nomad-driver-podman/plugins"
+data_dir = "/home/*username*/nomad-client-data"
+plugin_dir = "/home/*username*/nomad-driver-podman/plugins"
 name = "client-2"
 datacenter = "data-center-1"
 
