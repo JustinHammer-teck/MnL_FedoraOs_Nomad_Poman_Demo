@@ -1,4 +1,4 @@
-data_dir  = "/home/eugene/nomad-srv-data"
+data_dir  = "/home/*user*/nomad-srv-data"
 bind_addr = "0.0.0.0"
 log_level = "DEBUG"
 datacenter = "data-center-1"
