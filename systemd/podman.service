@@ -4,7 +4,7 @@ Description=Podman API service
 [Service]
 User=root
 WorkingDirectory=/var/run/
-ExecStart=podman system service --timeout 5000 unix:///var/run/podman.sock
+ExecStart=podman system service -t 0 & unix:///var/run/podman.sock
 Restart=no
 
 [Install]

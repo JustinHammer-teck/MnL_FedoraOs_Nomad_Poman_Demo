@@ -1,6 +1,5 @@
-log_level= "DEBUG"
-
-data_dir = "/home/*username*/nomad-client-data"
+log_level= "INFO"
+data_dir = "/home/$user/nomad-client-data/"
 
 name = "client-2"
 
@@ -13,6 +12,7 @@ client {
 
 plugin "nomad-driver-podman" {
   config {
+    socket_path = "unix:///run/podman/podman.sock"
     volumes {
       enabled      = true
       selinuxlabel = "z"
@@ -24,4 +24,8 @@ plugin "raw_exec" {
   config {
     enabled = true
   }
+}
+
+ports {
+  http = 5656
 }

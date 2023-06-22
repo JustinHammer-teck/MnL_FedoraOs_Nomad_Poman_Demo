@@ -8,6 +8,7 @@ I extensively reading the docs a lot
 
 ### Podman
 
+- https://gerov.eu/posts/traefik-for-podman/
 - https://docs.podman.io/en/latest/_static/api.html 
 - https://www.redhat.com/sysadmin/podmans-new-rest-api => this use for podman v2 current version is v4 
 - https://github.com/containers/podman/blob/main/docs/tutorials/rootless_tutorial.md
