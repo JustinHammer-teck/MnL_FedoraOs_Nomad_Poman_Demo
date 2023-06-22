@@ -1,6 +1,9 @@
 log_level= "DEBUG"
-data_dir = "/home/eugene/nomad-client-data"
+
+data_dir = "/home/*username*/nomad-client-data"
+
 name = "client-2"
+
 datacenter = "data-center-1"
 
 client {
