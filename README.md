@@ -16,6 +16,6 @@ I extensively reading the docs a lot
 ### Nomad
 
 - https://developer.hashicorp.com/nomad/tutorials/get-started/gs-deploy-job
-
+- https://developer.hashicorp.com/nomad/docs/job-specification/job
 
 ### Fedora CoreOs
