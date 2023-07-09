@@ -1,0 +1,56 @@
+variant: fcos
+version: 1.4.0
+passwd:
+  users:
+    - name: nomad
+      ssh_authorized_keys:
+        - ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQCq5xoqjdEe7USYG5Z/yGnQI/H9MS/7Uqp7JDPgaCi13sq0yiGVC3ntekU0KX6toR1iqMqCORCPSpGbThUvwTo097EacQTzhtg7vRfEmyU9u+FMjXmz/FsJC/J3Ej4M1rz3f+79DHBne6nyS3nByed0LnKAySXqSytdlzzhO5J/XzWu7z0WjU30BqIDwGA8GHakMr/0FoBHcGNiTUjkl9k47CzJioFieoqzbiyhvkO3gFp89cuhwDiaMo05aTPzD+DhQSdJKcmyXSzWVmHfACcw+a78uYxeYgXScKNoJxuIbB1mq7eHNtQsXCKP374tsyehMZ9c8+4KXL/iK4zBPXovRfETAbyovUOU5vRAlhwXdbYUQLnqVibXM5VfOhAgHJ5YmoeCG/h1k/g5dEqMjCfYfYzvRxNuaz/1rl2ZHCb6+0I+iRpJprmw+0Sv/GFuaQ9xmlHTflUk9aIou82iAU39CkAO4BFlC3bU71FxLS4r2dloTb2QUxh8SAjF4/6FK4U=
+      groups:
+        - wheel
+        - sudo
+systemd:
+  units:         
+    - name: cni.service
+      enabled: true
+      contents: |    
+        [Unit]
+        Description=Initial System Setup CNI 
+
+        [Service]
+        Type=oneshot
+        ExecStart=/usr/bin/curl -L -o cni-plugins.tgz "https://github.com/containernetworking/plugins/releases/download/v1.0.0/cni-plugins-linux-$( [ $(uname -m) = aarch64 ] && echo arm64 || echo amd64)"-v1.0.0.tgz && \
+        ExecStart=/usr/bin/mkdir -p /opt/cni/bin && \
+        ExecStart=/usr/bin/tar -C /opt/cni/bin -xzf cni-plugins.tgz
+        ExecStart=/usr/bin/echo 1 | sudo tee /proc/sys/net/bridge/bridge-nf-call-arptables 
+        ExecStart=/usr/bin/echo 1 | sudo tee /proc/sys/net/bridge/bridge-nf-call-ip6tables
+        ExecStart=/usr/bin/echo 1 | sudo tee /proc/sys/net/bridge/bridge-nf-call-iptables
+
+        [Install]
+        WantedBy=multi-user.target
+    - name: isntallcni.service
+      enabled: true
+      contents: |    
+        [Unit]
+        Description=CNI network service
+        Requires=podman.service
+
+        [Service]
+        User=root
+        WorkingDirectory=/home
+        ExecStart=podman system service -t 0 & unix:///var/run/podman.sock
+        Restart=no
+
+        [Service]
+        Type=oneshot
+
+        [Install]
+        WantedBy=multi-user.target
+    - name: podman.service
+      enabled: true
+    - name: rpm-ostree-countme.timer
+      enabled: false
+      mask: true
+    - name: sshd.service
+      enabled: false
+    - name: sshd.socket
+      enabled: true

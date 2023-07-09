@@ -1,0 +1,50 @@
+{
+  "ignition": {
+    "version": "3.3.0"
+  },
+  "passwd": {
+    "users": [
+      {
+        "groups": [
+          "wheel",
+          "sudo"
+        ],
+        "name": "nomad",
+        "sshAuthorizedKeys": [
+          "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQCq5xoqjdEe7USYG5Z/yGnQI/H9MS/7Uqp7JDPgaCi13sq0yiGVC3ntekU0KX6toR1iqMqCORCPSpGbThUvwTo097EacQTzhtg7vRfEmyU9u+FMjXmz/FsJC/J3Ej4M1rz3f+79DHBne6nyS3nByed0LnKAySXqSytdlzzhO5J/XzWu7z0WjU30BqIDwGA8GHakMr/0FoBHcGNiTUjkl9k47CzJioFieoqzbiyhvkO3gFp89cuhwDiaMo05aTPzD+DhQSdJKcmyXSzWVmHfACcw+a78uYxeYgXScKNoJxuIbB1mq7eHNtQsXCKP374tsyehMZ9c8+4KXL/iK4zBPXovRfETAbyovUOU5vRAlhwXdbYUQLnqVibXM5VfOhAgHJ5YmoeCG/h1k/g5dEqMjCfYfYzvRxNuaz/1rl2ZHCb6+0I+iRpJprmw+0Sv/GFuaQ9xmlHTflUk9aIou82iAU39CkAO4BFlC3bU71FxLS4r2dloTb2QUxh8SAjF4/6FK4U="
+        ]
+      }
+    ]
+  },
+  "systemd": {
+    "units": [
+      {
+        "contents": "[Unit]\nDescription=Initial System Setup CNI \n\n[Service]\nType=oneshot\nExecStart=/usr/bin/curl -L -o cni-plugins.tgz \"https://github.com/containernetworking/plugins/releases/download/v1.0.0/cni-plugins-linux-$( [ $(uname -m) = aarch64 ] \u0026\u0026 echo arm64 || echo amd64)\"-v1.0.0.tgz \u0026\u0026 \\\nExecStart=/usr/bin/mkdir -p /opt/cni/bin \u0026\u0026 \\\nExecStart=/usr/bin/tar -C /opt/cni/bin -xzf cni-plugins.tgz\nExecStart=/usr/bin/echo 1 | sudo tee /proc/sys/net/bridge/bridge-nf-call-arptables \nExecStart=/usr/bin/echo 1 | sudo tee /proc/sys/net/bridge/bridge-nf-call-ip6tables\nExecStart=/usr/bin/echo 1 | sudo tee /proc/sys/net/bridge/bridge-nf-call-iptables\n\n[Install]\nWantedBy=multi-user.target\n",
+        "enabled": true,
+        "name": "cni.service"
+      },
+      {
+        "contents": "[Unit]\nDescription=CNI network service\nRequires=podman.service\n\n[Service]\nUser=root\nWorkingDirectory=/home\nExecStart=podman system service -t 0 \u0026 unix:///var/run/podman.sock\nRestart=no\n\n[Service]\nType=oneshot\n\n[Install]\nWantedBy=multi-user.target\n",
+        "enabled": true,
+        "name": "isntallcni.service"
+      },
+      {
+        "enabled": true,
+        "name": "podman.service"
+      },
+      {
+        "enabled": false,
+        "mask": true,
+        "name": "rpm-ostree-countme.timer"
+      },
+      {
+        "enabled": false,
+        "name": "sshd.service"
+      },
+      {
+        "enabled": true,
+        "name": "sshd.socket"
+      }
+    ]
+  }
+}
