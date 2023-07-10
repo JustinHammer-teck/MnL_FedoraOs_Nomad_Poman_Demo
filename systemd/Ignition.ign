@@ -45,7 +45,7 @@
         "path": "/home/nomad/server.hcl",
         "contents": {
           "compression": "gzip",
-          "source": "data:;base64,H4sIAAAAAAAC/4yOTWrDMBCF93OKh7q2E5vgpgtvSktP0LWRrUljUCwxmphCyd2LbFoM7SISCD69nxln1Q48KQtamEzFikVliDJ3bhRkcXcOF95N4WLd+hZJ5iJbDFE/Tq6zzi01+3K5hsiHj87zzD5/v7w+v78ZIutmFh0T44uAs2rMavVUl1VzLPdlVdcGD45P9uoVMYji0BwaAiQO/1j/eh8JSCyne3qPdCPKkLbrbAautKn8CSWWmWVJ8WR7zw6/p4XKlQnoQ9CkYmPHn5EHRYuKbvQdAAD//5pu4gZ4AQAA"
+          "source": "data:;base64,H4sIAAAAAAAC/4yOz0rEMBDG7/MUH/Hc7mZd1vXQiyg+geeSNrNuIduEyWwRZN9d0qIU9GACgV++PzPeqet5VBY0MIWqBStriAq3fhAUcXOOF96M8eL88lZZpqpYDFE3jL513s8123q+hijE9zbwxKF8P788vb0aIucnFh0y45OAs2oqqn3c1fZwrLe13d0b3Hk+uWtQpCiK/WF/IEBS/4f1t/eBgMxy+k/vkW5EBfJ6ndXAhVaV36HMMrHMKR5dF9jj5zRQuTIBXYyaVVxq+SNxr2hg6UZfAQAA///VI0tjeAEAAA=="
         }
       }
     ]

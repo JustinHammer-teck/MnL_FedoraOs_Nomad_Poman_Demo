@@ -170,9 +170,9 @@ storage:
           log_level = "DEBUG"
 
           advertise {
-            http = "192.168.0.122" #default port 4646
-            rpc = "192.168.0.122"  #default port 4647
-            serf = "192.168.0.122" #default port 4648
+            http = "192.168.0.123" #default port 4646
+            rpc = "192.168.0.123"  #default port 4647
+            serf = "192.168.0.123" #default port 4648
           }
 
           ports {
