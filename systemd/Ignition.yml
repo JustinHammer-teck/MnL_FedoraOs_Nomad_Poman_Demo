@@ -13,71 +13,56 @@ systemd:
   - name: postinst.service
     enabled: true
     contents: |
-        [Unit]
-        Description=Initial System Setup
-        After=systemd-machine-id-commit.service
-        After=network-online.target
-        Before=zincati.service
-
-        [Service]
-        Type=oneshot
-        RemainAfterExit=yes
-        ExecStart=/usr/bin/systemctl restart systemd-resolved
-        ExecStart=/usr/bin/rpm-ostree install firewalld qemu-guest-agent unzip curl unzip 
-        ExecStart=/usr/bin/rpm-ostree override remove cifs-utils samba-common-libs samba-client-libs libsmbclient libwbclient samba-common sssd-krb5-common sssd-ipa sssd-nfs-idmap sssd-ldap sssd-client sssd-ad sssd-common sssd-krb5 sssd-common-pac
-        ExecStart=/bin/systemctl --no-block reboot
-
-        [Install]
-        WantedBy=multi-user.target   
-  - name: instnomad.service
-    enabled: true
-    contents: |    
       [Unit]
-      Description=Install Nomad to system
+      Description=Initial System Setup
+      After=systemd-machine-id-commit.service
+      After=network-online.target
+      Before=zincati.service
 
       [Service]
       Type=oneshot
-      ExecStart=/usr/bin/curl -L -o nomad_1.5.6_linux_386.zip https://https://releases.hashicorp.com/nomad/1.5.6/nomad_1.5.6_linux_386.zip
-      ExecStart=/usr/bin/unzip nomad_1.5.6_linux_386.zip
-      ExecStart=/usr/bin/mv nomad /usr/local/bin/
+      RemainAfterExit=yes
+      ExecStart=/usr/bin/systemctl restart systemd-resolved
+      ExecStart=/usr/bin/rpm-ostree install firewalld qemu-guest-agent unzip curl 
+      ExecStart=/usr/bin/rpm-ostree override remove cifs-utils samba-common-libs samba-client-libs libsmbclient libwbclient samba-common sssd-krb5-common sssd-ipa sssd-nfs-idmap sssd-ldap sssd-client sssd-ad sssd-common sssd-krb5 sssd-common-pac
+      ExecStart=/bin/systemctl --no-block reboot
 
       [Install]
-      WantedBy=multi-user.target         
-  - name: cni.service
-    enabled: true
-    contents: |    
-      [Unit]
-      Description=Initial System Setup CNI 
+      WantedBy=multi-user.target      
+  # - name: instnomad.service
+  #   enabled: true
+  #   contents: |    
+  #     [Unit]
+  #     Description=Install Nomad to system
+  #     Before=podmansetup.service
+  #     Before=podman.service
 
-      [Service]
-      Type=oneshot
-      ExecStart=/usr/bin/curl -L -o cni-plugins.tgz "https://github.com/containernetworking/plugins/releases/download/v1.0.0/cni-plugins-linux-$( [ $(uname -m) = aarch64 ] && echo arm64 || echo amd64)"-v1.0.0.tgz && \
-      ExecStart=/usr/bin/mkdir -p /opt/cni/bin && \
-      ExecStart=/usr/bin/tar -C /opt/cni/bin -xzf cni-plugins.tgz
-      ExecStart=/usr/bin/echo 1 | sudo tee /proc/sys/net/bridge/bridge-nf-call-arptables 
-      ExecStart=/usr/bin/echo 1 | sudo tee /proc/sys/net/bridge/bridge-nf-call-ip6tables
-      ExecStart=/usr/bin/echo 1 | sudo tee /proc/sys/net/bridge/bridge-nf-call-iptables
+  #     [Service]
+  #     Type=oneshot
+  #     ExecStart=/usr/bin/curl -L -o nomad_1.5.6_linux_386.zip https://https://releases.hashicorp.com/nomad/1.5.6/nomad_1.5.6_linux_386.zip
+  #     ExecStart=/usr/bin/unzip nomad_1.5.6_linux_386.zip
+  #     ExecStart=/usr/bin/mv nomad /usr/local/bin/
 
-      [Install]
-      WantedBy=multi-user.target
-  - name: podmansetup.service
-    enabled: true
-    contents: |    
-      [Unit]
-      Description=Set up Podman service
-      Requires=podman.service
+  #     [Install]
+  #     WantedBy=multi-user.target     
+  # - name: podmansetup.service
+  #   enabled: true
+  #   contents: |    
+  #     [Unit]
+  #     Description=Set up Podman service
+  #     Requires=podman.service
 
-      [Service]
-      User=root
-      WorkingDirectory=/home
-      ExecStart=podman system service -t 0 & unix:///var/run/podman.sock
-      Restart=no
+  #     [Service]
+  #     User=root
+  #     WorkingDirectory=/home
+  #     ExecStart=podman system service -t 0 & unix:///var/run/podman.sock
+  #     Restart=no
 
-      [Service]
-      Type=oneshot
+  #     [Service]
+  #     Type=oneshot
 
-      [Install]
-      WantedBy=multi-user.target
+  #     [Install]
+  #     WantedBy=multi-user.target 
   - name: podman.service
     enabled: true
   - name: rpm-ostree-countme.timer

@@ -31,24 +31,9 @@
   "systemd": {
     "units": [
       {
-        "contents": "[Unit]\nDescription=Initial System Setup\nAfter=systemd-machine-id-commit.service\nAfter=network-online.target\nBefore=zincati.service\n\n[Service]\nType=oneshot\nRemainAfterExit=yes\nExecStart=/usr/bin/systemctl restart systemd-resolved\nExecStart=/usr/bin/rpm-ostree install firewalld qemu-guest-agent unzip curl unzip \nExecStart=/usr/bin/rpm-ostree override remove cifs-utils samba-common-libs samba-client-libs libsmbclient libwbclient samba-common sssd-krb5-common sssd-ipa sssd-nfs-idmap sssd-ldap sssd-client sssd-ad sssd-common sssd-krb5 sssd-common-pac\nExecStart=/bin/systemctl --no-block reboot\n\n[Install]\nWantedBy=multi-user.target   \n",
+        "contents": "[Unit]\nDescription=Initial System Setup\nAfter=systemd-machine-id-commit.service\nAfter=network-online.target\nBefore=zincati.service\n\n[Service]\nType=oneshot\nRemainAfterExit=yes\nExecStart=/usr/bin/systemctl restart systemd-resolved\nExecStart=/usr/bin/rpm-ostree install firewalld qemu-guest-agent unzip curl \nExecStart=/usr/bin/rpm-ostree override remove cifs-utils samba-common-libs samba-client-libs libsmbclient libwbclient samba-common sssd-krb5-common sssd-ipa sssd-nfs-idmap sssd-ldap sssd-client sssd-ad sssd-common sssd-krb5 sssd-common-pac\nExecStart=/bin/systemctl --no-block reboot\n\n[Install]\nWantedBy=multi-user.target      \n",
         "enabled": true,
         "name": "postinst.service"
-      },
-      {
-        "contents": "[Unit]\nDescription=Install Nomad to system\n\n[Service]\nType=oneshot\nExecStart=/usr/bin/curl -L -o nomad_1.5.6_linux_386.zip https://https://releases.hashicorp.com/nomad/1.5.6/nomad_1.5.6_linux_386.zip\nExecStart=/usr/bin/unzip nomad_1.5.6_linux_386.zip\nExecStart=/usr/bin/mv nomad /usr/local/bin/\n\n[Install]\nWantedBy=multi-user.target         \n",
-        "enabled": true,
-        "name": "instnomad.service"
-      },
-      {
-        "contents": "[Unit]\nDescription=Initial System Setup CNI \n\n[Service]\nType=oneshot\nExecStart=/usr/bin/curl -L -o cni-plugins.tgz \"https://github.com/containernetworking/plugins/releases/download/v1.0.0/cni-plugins-linux-$( [ $(uname -m) = aarch64 ] \u0026\u0026 echo arm64 || echo amd64)\"-v1.0.0.tgz \u0026\u0026 \\\nExecStart=/usr/bin/mkdir -p /opt/cni/bin \u0026\u0026 \\\nExecStart=/usr/bin/tar -C /opt/cni/bin -xzf cni-plugins.tgz\nExecStart=/usr/bin/echo 1 | sudo tee /proc/sys/net/bridge/bridge-nf-call-arptables \nExecStart=/usr/bin/echo 1 | sudo tee /proc/sys/net/bridge/bridge-nf-call-ip6tables\nExecStart=/usr/bin/echo 1 | sudo tee /proc/sys/net/bridge/bridge-nf-call-iptables\n\n[Install]\nWantedBy=multi-user.target\n",
-        "enabled": true,
-        "name": "cni.service"
-      },
-      {
-        "contents": "[Unit]\nDescription=Set up Podman service\nRequires=podman.service\n\n[Service]\nUser=root\nWorkingDirectory=/home\nExecStart=podman system service -t 0 \u0026 unix:///var/run/podman.sock\nRestart=no\n\n[Service]\nType=oneshot\n\n[Install]\nWantedBy=multi-user.target\n",
-        "enabled": true,
-        "name": "podmansetup.service"
       },
       {
         "enabled": true,
