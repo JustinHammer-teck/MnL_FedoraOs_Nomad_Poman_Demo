@@ -2,14 +2,28 @@ variant: fcos
 version: 1.4.0
 passwd:
   users:
-    - name: nomad
+    - name: eugene
       ssh_authorized_keys:
         - ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQCq5xoqjdEe7USYG5Z/yGnQI/H9MS/7Uqp7JDPgaCi13sq0yiGVC3ntekU0KX6toR1iqMqCORCPSpGbThUvwTo097EacQTzhtg7vRfEmyU9u+FMjXmz/FsJC/J3Ej4M1rz3f+79DHBne6nyS3nByed0LnKAySXqSytdlzzhO5J/XzWu7z0WjU30BqIDwGA8GHakMr/0FoBHcGNiTUjkl9k47CzJioFieoqzbiyhvkO3gFp89cuhwDiaMo05aTPzD+DhQSdJKcmyXSzWVmHfACcw+a78uYxeYgXScKNoJxuIbB1mq7eHNtQsXCKP374tsyehMZ9c8+4KXL/iK4zBPXovRfETAbyovUOU5vRAlhwXdbYUQLnqVibXM5VfOhAgHJ5YmoeCG/h1k/g5dEqMjCfYfYzvRxNuaz/1rl2ZHCb6+0I+iRpJprmw+0Sv/GFuaQ9xmlHTflUk9aIou82iAU39CkAO4BFlC3bU71FxLS4r2dloTb2QUxh8SAjF4/6FK4U=
       groups:
         - wheel
         - sudo
 systemd:
-  units:         
+  units:
+    - name: instnomad.service
+      enabled: true
+      contents: |    
+        [Unit]
+        Description=Install Nomad to system
+
+        [Service]
+        Type=oneshot
+        ExecStart=/usr/bin/wget https://https://releases.hashicorp.com/nomad/1.5.6/nomad_1.5.6_linux_386.zip
+        ExecStart=/usr/bin/unzip nomad_1.5.6_linux_386.zip
+        ExecStart=/usr/bin/mv nomad /usr/local/bin/
+
+        [Install]
+        WantedBy=multi-user.target         
     - name: cni.service
       enabled: true
       contents: |    
@@ -27,11 +41,11 @@ systemd:
 
         [Install]
         WantedBy=multi-user.target
-    - name: isntallcni.service
+    - name: podmansetup.service
       enabled: true
       contents: |    
         [Unit]
-        Description=CNI network service
+        Description=Set up Podman service
         Requires=podman.service
 
         [Service]
@@ -54,3 +68,13 @@ systemd:
       enabled: false
     - name: sshd.socket
       enabled: true
+storage:
+  files:
+    - path: /etc/ssh/sshd_config.d/20-enable-passwords.conf
+      mode: 0644
+      contents:
+        inline: |
+          # Fedora CoreOS disables SSH password login by default.
+          # Enable it.
+          # This file must sort before 40-disable-passwords.conf.
+          PasswordAuthentication yes
