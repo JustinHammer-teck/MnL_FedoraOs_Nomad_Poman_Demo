@@ -15,6 +15,9 @@ systemd:
     contents: |
         [Unit]
         Description=Initial System Setup
+        After=systemd-machine-id-commit.service
+        After=network-online.target
+        Before=zincati.service
 
         [Service]
         Type=oneshot
