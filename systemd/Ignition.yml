@@ -10,68 +10,69 @@ passwd:
         - sudo
 systemd:
   units:
-  - name: postinst.service
-    enabled: true
-    contents: |
-      [Unit]
-      Description=Initial System Setup
-      After=systemd-machine-id-commit.service
-      After=network-online.target
-      Before=zincati.service
+    - name: postinst.service
+      enabled: true
+      contents: |
+        [Unit]
+        Description=Initial System Setup
+        After=systemd-machine-id-commit.service
+        After=network-online.target
+        Before=zincati.service
 
-      [Service]
-      Type=oneshot
-      RemainAfterExit=yes
-      ExecStart=/usr/bin/systemctl restart systemd-resolved
-      ExecStart=/usr/bin/rpm-ostree install firewalld qemu-guest-agent unzip curl 
-      ExecStart=/usr/bin/rpm-ostree override remove cifs-utils samba-common-libs samba-client-libs libsmbclient libwbclient samba-common sssd-krb5-common sssd-ipa sssd-nfs-idmap sssd-ldap sssd-client sssd-ad sssd-common sssd-krb5 sssd-common-pac
-      ExecStart=/bin/systemctl --no-block reboot
+        [Service]
+        Type=oneshot
+        RemainAfterExit=yes
+        ExecStart=/usr/bin/sed -i 's/#DNSSEC=no/DNSSEC=yes/g' /etc/systemd/resolved.conf
+        ExecStart=/usr/bin/systemctl restart systemd-resolved
+        ExecStart=/usr/bin/rpm-ostree install firewalld qemu-guest-agent unzip curl 
+        ExecStart=/usr/bin/rpm-ostree override remove cifs-utils samba-common-libs samba-client-libs libsmbclient libwbclient samba-common sssd-krb5-common sssd-ipa sssd-nfs-idmap sssd-ldap sssd-client sssd-ad sssd-common sssd-krb5 sssd-common-pac
+        ExecStart=/bin/systemctl --no-block reboot
 
-      [Install]
-      WantedBy=multi-user.target      
-  # - name: instnomad.service
-  #   enabled: true
-  #   contents: |    
-  #     [Unit]
-  #     Description=Install Nomad to system
-  #     Before=podmansetup.service
-  #     Before=podman.service
+        [Install]
+        WantedBy=multi-user.target
+    # - name: instnomad.service
+    #   enabled: true
+    #   contents: |
+    #     [Unit]
+    #     Description=Install Nomad to system
+    #     Before=podmansetup.service
+    #     Before=podman.service
 
-  #     [Service]
-  #     Type=oneshot
-  #     ExecStart=/usr/bin/curl -L -o nomad_1.5.6_linux_386.zip https://https://releases.hashicorp.com/nomad/1.5.6/nomad_1.5.6_linux_386.zip
-  #     ExecStart=/usr/bin/unzip nomad_1.5.6_linux_386.zip
-  #     ExecStart=/usr/bin/mv nomad /usr/local/bin/
+    #     [Service]
+    #     Type=oneshot
+    #     ExecStart=/usr/bin/curl -L -o nomad_1.5.6_linux_386.zip https://https://releases.hashicorp.com/nomad/1.5.6/nomad_1.5.6_linux_386.zip
+    #     ExecStart=/usr/bin/unzip nomad_1.5.6_linux_386.zip
+    #     ExecStart=/usr/bin/mv nomad /usr/local/bin/
 
-  #     [Install]
-  #     WantedBy=multi-user.target     
-  # - name: podmansetup.service
-  #   enabled: true
-  #   contents: |    
-  #     [Unit]
-  #     Description=Set up Podman service
-  #     Requires=podman.service
+    #     [Install]
+    #     WantedBy=multi-user.target
+    # - name: podmansetup.service
+    #   enabled: true
+    #   contents: |
+    #     [Unit]
+    #     Description=Set up Podman service
+    #     Requires=podman.service
 
-  #     [Service]
-  #     User=root
-  #     WorkingDirectory=/home
-  #     ExecStart=podman system service -t 0 & unix:///var/run/podman.sock
-  #     Restart=no
+    #     [Service]
+    #     User=root
+    #     WorkingDirectory=/home
+    #     ExecStart=podman system service -t 0 & unix:///var/run/podman.sock
+    #     Restart=no
 
-  #     [Service]
-  #     Type=oneshot
+    #     [Service]
+    #     Type=oneshot
 
-  #     [Install]
-  #     WantedBy=multi-user.target 
-  - name: podman.service
-    enabled: true
-  - name: rpm-ostree-countme.timer
-    enabled: false
-    mask: true
-  - name: sshd.service
-    enabled: false
-  - name: sshd.socket
-    enabled: true
+    #     [Install]
+    #     WantedBy=multi-user.target
+    - name: podman.service
+      enabled: true
+    - name: rpm-ostree-countme.timer
+      enabled: false
+      mask: true
+    - name: sshd.service
+      enabled: false
+    - name: sshd.socket
+      enabled: true
 storage:
   files:
     - path: /etc/ssh/sshd_config.d/20-enable-passwords.conf
