@@ -59,7 +59,7 @@ systemd:
         [Service]
         Type=oneshot
         WorkingDirectory=/home/nomad
-        ExecStart=/usr/bin/curl -L -o nomad_1.5.6_linux_386.zip https://releases.hashicorp.com/nomad/1.5.6/nomad_1.5.6_linux_386.zip
+        ExecStart=/usr/bin/curl -L -o nomad https://releases.hashicorp.com/nomad/1.5.6/nomad_1.5.6_linux_386.zip
         ExecStart=/usr/bin/unzip nomad_1.5.6_linux_386.zip
         ExecStart=/usr/bin/mv nomad /usr/local/bin/
 
