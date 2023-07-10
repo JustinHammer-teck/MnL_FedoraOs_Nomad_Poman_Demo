@@ -4,7 +4,7 @@ passwd:
   users:
     - name: eugene
       ssh_authorized_keys:
-        - ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQCq5xoqjdEe7USYG5Z/yGnQI/H9MS/7Uqp7JDPgaCi13sq0yiGVC3ntekU0KX6toR1iqMqCORCPSpGbThUvwTo097EacQTzhtg7vRfEmyU9u+FMjXmz/FsJC/J3Ej4M1rz3f+79DHBne6nyS3nByed0LnKAySXqSytdlzzhO5J/XzWu7z0WjU30BqIDwGA8GHakMr/0FoBHcGNiTUjkl9k47CzJioFieoqzbiyhvkO3gFp89cuhwDiaMo05aTPzD+DhQSdJKcmyXSzWVmHfACcw+a78uYxeYgXScKNoJxuIbB1mq7eHNtQsXCKP374tsyehMZ9c8+4KXL/iK4zBPXovRfETAbyovUOU5vRAlhwXdbYUQLnqVibXM5VfOhAgHJ5YmoeCG/h1k/g5dEqMjCfYfYzvRxNuaz/1rl2ZHCb6+0I+iRpJprmw+0Sv/GFuaQ9xmlHTflUk9aIou82iAU39CkAO4BFlC3bU71FxLS4r2dloTb2QUxh8SAjF4/6FK4U=
+        - ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQDMES8LZ9z7Rl38/G9gMddRLJiSu9FoEKtu//rm60yEKXmEOh9l4/YsRwPbaqJmWLtElz6zreboxaakPK2TnzT24jA6TJdsWYno5yJB1YypNEAyEzqjNcDbHRY1YP1U2sE4DO2Uq8LLZPGsgppS85L4aIwCHjj0VxAp82jmosaK7Hijot8VqTcNrsEgO5GIF9ZHhNm4i5vzck79Jww9w1+0O2fTATi+mRXYNc4mJoG1FVN471sMtyvJIFmGKorzZ2tUNdpz0cQKtWoF51psmEOJ33pqOMAXNPOSWAmO4JfcS6K3BcrF2UenC8FMI+B2gA42LkPy8pMRqmjNDKHmvxD103qtisnsXgHpSH3NCImtvjK2vNGalzrrElNJdpRW+uHjiQDUm7WSPG6UtwJf/is0Sd6GCQ3ZHlUoE5DhH6pHeZMssrx8mbVaCFjaWO6GtcM9Q7Mpo03/1n1ecOTg8dpWvt25kFurtIuW+m8BtHVj/efmm91d02OkbYkoIBTHyTk=
       groups:
         - wheel
         - sudo
