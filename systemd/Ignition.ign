@@ -63,6 +63,11 @@
         "name": "instnomad.service"
       },
       {
+        "contents": "[Unit]\nDescription=Nomad\nDocumentation=https://www.nomadproject.io/docs/\nWants=network-online.target\nAfter=network-online.target\nAfter=instnomad.service\nConditionPathExists=/usr/local/bin/nomad\n\n# When using Nomad with Consul it is not necessary to start Consul first. These\n# lines start Consul before Nomad as an optimization to avoid Nomad logging\n# that Consul is unavailable at startup.\n#Wants=consul.service\n#After=consul.service\n\n[Service]\nRemainAfterExit=yes\n# Nomad server should be run as the nomad user. Nomad clients\n# should be run as root\nUser=nomad\n\nExecReload=/bin/kill -HUP $MAINPID\nExecStart=/usr/local/bin/nomad agent -config /home/nomad/server.hcl\nKillMode=process\nKillSignal=SIGINT\nLimitNOFILE=65536\nLimitNPROC=infinity\nRestart=on-failure\nRestartSec=2\n\n## Configure unit start rate limiting. Units which are started more than\n## *burst* times within an *interval* time span are not permitted to start any\n## more. Use `StartLimitIntervalSec` or `StartLimitInterval` (depending on\n## systemd version) to configure the checking interval and `StartLimitBurst`\n## to configure how many starts per interval are allowed. The values in the\n## commented lines are defaults.\n\n# StartLimitBurst = 5\n\n## StartLimitIntervalSec is used for systemd versions \u003e= 230\n# StartLimitIntervalSec = 10s\n\n## StartLimitInterval is used for systemd versions \u003c 230\n# StartLimitInterval = 10s\n\nTasksMax=infinity\nOOMScoreAdjust=-1000\n\n[Install]\nWantedBy=multi-user.target  \n",
+        "enabled": true,
+        "name": "nomad.service"
+      },
+      {
         "enabled": false,
         "name": "docker.service"
       },
