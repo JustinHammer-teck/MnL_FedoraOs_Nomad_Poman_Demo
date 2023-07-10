@@ -9,7 +9,7 @@ passwd:
       groups:
         - wheel
         - sudo
-    - name: rancher
+    - name: nomad
       home_dir: /home/nomad
       groups: # adds 'nomad' user to root group
         - sudo

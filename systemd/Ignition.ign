@@ -21,7 +21,7 @@
           "wheel"
         ],
         "homeDir": "/home/nomad",
-        "name": "rancher",
+        "name": "nomad",
         "passwordHash": "$y$j9T$TpbM8GKVWJ7QhoMwvs.Gj0$CndddajuRyD4FFmZ1JfX0EG4pmjaq9pB000atjgtu28",
         "sshAuthorizedKeys": [
           "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQDMES8LZ9z7Rl38/G9gMddRLJiSu9FoEKtu//rm60yEKXmEOh9l4/YsRwPbaqJmWLtElz6zreboxaakPK2TnzT24jA6TJdsWYno5yJB1YypNEAyEzqjNcDbHRY1YP1U2sE4DO2Uq8LLZPGsgppS85L4aIwCHjj0VxAp82jmosaK7Hijot8VqTcNrsEgO5GIF9ZHhNm4i5vzck79Jww9w1+0O2fTATi+mRXYNc4mJoG1FVN471sMtyvJIFmGKorzZ2tUNdpz0cQKtWoF51psmEOJ33pqOMAXNPOSWAmO4JfcS6K3BcrF2UenC8FMI+B2gA42LkPy8pMRqmjNDKHmvxD103qtisnsXgHpSH3NCImtvjK2vNGalzrrElNJdpRW+uHjiQDUm7WSPG6UtwJf/is0Sd6GCQ3ZHlUoE5DhH6pHeZMssrx8mbVaCFjaWO6GtcM9Q7Mpo03/1n1ecOTg8dpWvt25kFurtIuW+m8BtHVj/efmm91d02OkbYkoIBTHyTk="
