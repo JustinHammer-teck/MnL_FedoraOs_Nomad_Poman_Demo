@@ -2,6 +2,8 @@ variant: fcos
 version: 1.4.0
 passwd:
   users:
+    - name: core
+      password_hash: $y$j9T$TpbM8GKVWJ7QhoMwvs.Gj0$CndddajuRyD4FFmZ1JfX0EG4pmjaq9pB000atjgtu28
     - name: eugene
       password_hash: $y$j9T$TpbM8GKVWJ7QhoMwvs.Gj0$CndddajuRyD4FFmZ1JfX0EG4pmjaq9pB000atjgtu28
       ssh_authorized_keys:
@@ -39,12 +41,8 @@ systemd:
         RemainAfterExit=yes
         ExecStart=/usr/bin/sed -i 's/#DNSSEC=no/DNSSEC=yes/g' /etc/systemd/resolved.conf
         ExecStart=/usr/bin/systemctl restart systemd-resolved
-        ExecStart=/usr/bin/rpm-ostree install qemu-guest-agent unzip
+        ExecStart=/usr/bin/rpm-ostree install unzip
         ExecStart=/usr/bin/rpm-ostree override remove cifs-utils samba-common-libs samba-client-libs libsmbclient libwbclient samba-common sssd-krb5-common sssd-ipa sssd-nfs-idmap sssd-ldap sssd-client sssd-ad sssd-common sssd-krb5 sssd-common-pac
-        ExecStart=/usr/bin/mkdir -p /etc/systemd/system/sshd.service.d
-        ExecStart=/usr/bin/curl https://raw.githubusercontent.com/GrapheneOS/infrastructure/main/systemd/system/sshd.service.d/limits.conf -o /etc/systemd/system/sshd.service.d/limits.conf
-        ExecStart=/bin/systemctl disable systemd-resolved
-        ExecStart=/bin/touch /var/lib/%N.stamp
         ExecStart=/bin/systemctl --no-block reboot
 
         [Install]
@@ -56,10 +54,11 @@ systemd:
         Description=Install Nomad to system
         After=network-online.target
         Before=podman.service
-
+        ConditionPathExists=/usr/bin/unzip
+        
         [Service]
         Type=oneshot
-        WorkingDirectory=/home
+        WorkingDirectory=/home/nomad
         ExecStart=/usr/bin/curl -L -o nomad_1.5.6_linux_386.zip https://releases.hashicorp.com/nomad/1.5.6/nomad_1.5.6_linux_386.zip
         ExecStart=/usr/bin/unzip nomad_1.5.6_linux_386.zip
         ExecStart=/usr/bin/mv nomad /usr/local/bin/
