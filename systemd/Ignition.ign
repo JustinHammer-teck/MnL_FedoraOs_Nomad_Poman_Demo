@@ -31,7 +31,12 @@
   "systemd": {
     "units": [
       {
-        "contents": "[Unit]\nDescription=Install Nomad to system\n\n[Service]\nType=oneshot\nExecStart=/usr/bin/wget https://https://releases.hashicorp.com/nomad/1.5.6/nomad_1.5.6_linux_386.zip\nExecStart=/usr/bin/unzip nomad_1.5.6_linux_386.zip\nExecStart=/usr/bin/mv nomad /usr/local/bin/\n\n[Install]\nWantedBy=multi-user.target         \n",
+        "contents": "[Unit]\nDescription=Initial System Setup\n\n[Service]\nType=oneshot\nRemainAfterExit=yes\nExecStart=/usr/bin/systemctl restart systemd-resolved\nExecStart=/usr/bin/rpm-ostree install firewalld qemu-guest-agent unzip curl unzip \nExecStart=/usr/bin/rpm-ostree override remove cifs-utils samba-common-libs samba-client-libs libsmbclient libwbclient samba-common sssd-krb5-common sssd-ipa sssd-nfs-idmap sssd-ldap sssd-client sssd-ad sssd-common sssd-krb5 sssd-common-pac\nExecStart=/bin/systemctl --no-block reboot\n\n[Install]\nWantedBy=multi-user.target   \n",
+        "enabled": true,
+        "name": "postinst.service"
+      },
+      {
+        "contents": "[Unit]\nDescription=Install Nomad to system\n\n[Service]\nType=oneshot\nExecStart=/usr/bin/curl -L -o nomad_1.5.6_linux_386.zip https://https://releases.hashicorp.com/nomad/1.5.6/nomad_1.5.6_linux_386.zip\nExecStart=/usr/bin/unzip nomad_1.5.6_linux_386.zip\nExecStart=/usr/bin/mv nomad /usr/local/bin/\n\n[Install]\nWantedBy=multi-user.target         \n",
         "enabled": true,
         "name": "instnomad.service"
       },
