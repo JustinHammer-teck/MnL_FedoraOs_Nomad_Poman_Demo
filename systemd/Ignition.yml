@@ -3,11 +3,21 @@ version: 1.4.0
 passwd:
   users:
     - name: eugene
+      password_hash: $y$j9T$TpbM8GKVWJ7QhoMwvs.Gj0$CndddajuRyD4FFmZ1JfX0EG4pmjaq9pB000atjgtu28  
       ssh_authorized_keys:
         - ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQDMES8LZ9z7Rl38/G9gMddRLJiSu9FoEKtu//rm60yEKXmEOh9l4/YsRwPbaqJmWLtElz6zreboxaakPK2TnzT24jA6TJdsWYno5yJB1YypNEAyEzqjNcDbHRY1YP1U2sE4DO2Uq8LLZPGsgppS85L4aIwCHjj0VxAp82jmosaK7Hijot8VqTcNrsEgO5GIF9ZHhNm4i5vzck79Jww9w1+0O2fTATi+mRXYNc4mJoG1FVN471sMtyvJIFmGKorzZ2tUNdpz0cQKtWoF51psmEOJ33pqOMAXNPOSWAmO4JfcS6K3BcrF2UenC8FMI+B2gA42LkPy8pMRqmjNDKHmvxD103qtisnsXgHpSH3NCImtvjK2vNGalzrrElNJdpRW+uHjiQDUm7WSPG6UtwJf/is0Sd6GCQ3ZHlUoE5DhH6pHeZMssrx8mbVaCFjaWO6GtcM9Q7Mpo03/1n1ecOTg8dpWvt25kFurtIuW+m8BtHVj/efmm91d02OkbYkoIBTHyTk=
       groups:
         - wheel
         - sudo
+    - name: rancher
+      home_dir: /home/nomad
+      groups: # adds 'nomad' user to root group
+        - sudo
+        - wheel
+      shell: /bin/bash
+      password_hash: $y$j9T$TpbM8GKVWJ7QhoMwvs.Gj0$CndddajuRyD4FFmZ1JfX0EG4pmjaq9pB000atjgtu28  
+      ssh_authorized_keys:
+        - ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQDMES8LZ9z7Rl38/G9gMddRLJiSu9FoEKtu//rm60yEKXmEOh9l4/YsRwPbaqJmWLtElz6zreboxaakPK2TnzT24jA6TJdsWYno5yJB1YypNEAyEzqjNcDbHRY1YP1U2sE4DO2Uq8LLZPGsgppS85L4aIwCHjj0VxAp82jmosaK7Hijot8VqTcNrsEgO5GIF9ZHhNm4i5vzck79Jww9w1+0O2fTATi+mRXYNc4mJoG1FVN471sMtyvJIFmGKorzZ2tUNdpz0cQKtWoF51psmEOJ33pqOMAXNPOSWAmO4JfcS6K3BcrF2UenC8FMI+B2gA42LkPy8pMRqmjNDKHmvxD103qtisnsXgHpSH3NCImtvjK2vNGalzrrElNJdpRW+uHjiQDUm7WSPG6UtwJf/is0Sd6GCQ3ZHlUoE5DhH6pHeZMssrx8mbVaCFjaWO6GtcM9Q7Mpo03/1n1ecOTg8dpWvt25kFurtIuW+m8BtHVj/efmm91d02OkbYkoIBTHyTk=
 systemd:
   units:
     - name: postinst.service
@@ -22,30 +32,30 @@ systemd:
         [Service]
         Type=oneshot
         RemainAfterExit=yes
-        ExecStart=/usr/bin/sed -i 's/#DNSSEC=no/DNSSEC=yes/g' /etc/systemd/resolved.conf
         ExecStart=/usr/bin/systemctl restart systemd-resolved
-        ExecStart=/usr/bin/rpm-ostree install firewalld qemu-guest-agent unzip curl 
-        ExecStart=/usr/bin/rpm-ostree override remove cifs-utils samba-common-libs samba-client-libs libsmbclient libwbclient samba-common sssd-krb5-common sssd-ipa sssd-nfs-idmap sssd-ldap sssd-client sssd-ad sssd-common sssd-krb5 sssd-common-pac
+        ExecStart=/usr/bin/rpm-ostree install qemu-guest-agent
         ExecStart=/bin/systemctl --no-block reboot
 
         [Install]
         WantedBy=multi-user.target
-    # - name: instnomad.service
-    #   enabled: true
-    #   contents: |
-    #     [Unit]
-    #     Description=Install Nomad to system
-    #     Before=podmansetup.service
-    #     Before=podman.service
+    - name: instnomad.service
+      enabled: true
+      contents: |
+        [Unit]
+        Description=Install Nomad to system
+        Before=podman.service
 
-    #     [Service]
-    #     Type=oneshot
-    #     ExecStart=/usr/bin/curl -L -o nomad_1.5.6_linux_386.zip https://https://releases.hashicorp.com/nomad/1.5.6/nomad_1.5.6_linux_386.zip
-    #     ExecStart=/usr/bin/unzip nomad_1.5.6_linux_386.zip
-    #     ExecStart=/usr/bin/mv nomad /usr/local/bin/
+        [Service]
+        Type=oneshot
+        WorkingDirectory=/home
+        ExecStart=/usr/bin/curl -L -o nomad_1.5.6_linux_386.zip https://https://releases.hashicorp.com/nomad/1.5.6/nomad_1.5.6_linux_386.zip
+        ExecStart=/usr/bin/unzip nomad_1.5.6_linux_386.zip
+        ExecStart=/usr/bin/mv nomad /usr/local/bin/
+        ExecStart=/usr/bin/touch nomad 
 
-    #     [Install]
-    #     WantedBy=multi-user.target
+
+        [Install]
+        WantedBy=multi-user.target
     # - name: podmansetup.service
     #   enabled: true
     #   contents: |
@@ -64,6 +74,8 @@ systemd:
 
     #     [Install]
     #     WantedBy=multi-user.target
+    - name: docker.service
+      enabled: false
     - name: podman.service
       enabled: true
     - name: rpm-ostree-countme.timer
@@ -83,3 +95,32 @@ storage:
           # Enable it.
           # This file must sort before 40-disable-passwords.conf.
           PasswordAuthentication yes
+    - path: /home/nomad/server.hcl
+      overwrite: true
+      contents:
+        inline: |
+          datacenter = "data-center-1"
+
+          data_dir  = "/home/nomad/nomad-srv-data"
+          
+          bind_addr = "0.0.0.0"
+          
+          log_level = "DEBUG"
+
+          advertise {
+            http = "192.168.0.121" #default port 4646
+            rpc = "192.168.0.121"  #default port 4647
+            serf = "192.168.0.121" #default port 4648
+          }
+
+          ports {
+            http = 4646
+            rpc  = 4647
+            serf = 4648
+          }
+
+          server {
+            enabled          = true
+            bootstrap_expect = 1
+          }
+

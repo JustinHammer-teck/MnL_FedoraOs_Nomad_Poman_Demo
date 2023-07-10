@@ -10,9 +10,23 @@
           "sudo"
         ],
         "name": "eugene",
+        "passwordHash": "$y$j9T$TpbM8GKVWJ7QhoMwvs.Gj0$CndddajuRyD4FFmZ1JfX0EG4pmjaq9pB000atjgtu28",
         "sshAuthorizedKeys": [
           "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQDMES8LZ9z7Rl38/G9gMddRLJiSu9FoEKtu//rm60yEKXmEOh9l4/YsRwPbaqJmWLtElz6zreboxaakPK2TnzT24jA6TJdsWYno5yJB1YypNEAyEzqjNcDbHRY1YP1U2sE4DO2Uq8LLZPGsgppS85L4aIwCHjj0VxAp82jmosaK7Hijot8VqTcNrsEgO5GIF9ZHhNm4i5vzck79Jww9w1+0O2fTATi+mRXYNc4mJoG1FVN471sMtyvJIFmGKorzZ2tUNdpz0cQKtWoF51psmEOJ33pqOMAXNPOSWAmO4JfcS6K3BcrF2UenC8FMI+B2gA42LkPy8pMRqmjNDKHmvxD103qtisnsXgHpSH3NCImtvjK2vNGalzrrElNJdpRW+uHjiQDUm7WSPG6UtwJf/is0Sd6GCQ3ZHlUoE5DhH6pHeZMssrx8mbVaCFjaWO6GtcM9Q7Mpo03/1n1ecOTg8dpWvt25kFurtIuW+m8BtHVj/efmm91d02OkbYkoIBTHyTk="
         ]
+      },
+      {
+        "groups": [
+          "sudo",
+          "wheel"
+        ],
+        "homeDir": "/home/nomad",
+        "name": "rancher",
+        "passwordHash": "$y$j9T$TpbM8GKVWJ7QhoMwvs.Gj0$CndddajuRyD4FFmZ1JfX0EG4pmjaq9pB000atjgtu28",
+        "sshAuthorizedKeys": [
+          "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQDMES8LZ9z7Rl38/G9gMddRLJiSu9FoEKtu//rm60yEKXmEOh9l4/YsRwPbaqJmWLtElz6zreboxaakPK2TnzT24jA6TJdsWYno5yJB1YypNEAyEzqjNcDbHRY1YP1U2sE4DO2Uq8LLZPGsgppS85L4aIwCHjj0VxAp82jmosaK7Hijot8VqTcNrsEgO5GIF9ZHhNm4i5vzck79Jww9w1+0O2fTATi+mRXYNc4mJoG1FVN471sMtyvJIFmGKorzZ2tUNdpz0cQKtWoF51psmEOJ33pqOMAXNPOSWAmO4JfcS6K3BcrF2UenC8FMI+B2gA42LkPy8pMRqmjNDKHmvxD103qtisnsXgHpSH3NCImtvjK2vNGalzrrElNJdpRW+uHjiQDUm7WSPG6UtwJf/is0Sd6GCQ3ZHlUoE5DhH6pHeZMssrx8mbVaCFjaWO6GtcM9Q7Mpo03/1n1ecOTg8dpWvt25kFurtIuW+m8BtHVj/efmm91d02OkbYkoIBTHyTk="
+        ],
+        "shell": "/bin/bash"
       }
     ]
   },
@@ -25,15 +39,32 @@
           "source": "data:,%23%20Fedora%20CoreOS%20disables%20SSH%20password%20login%20by%20default.%0A%23%20Enable%20it.%0A%23%20This%20file%20must%20sort%20before%2040-disable-passwords.conf.%0APasswordAuthentication%20yes%0A"
         },
         "mode": 420
+      },
+      {
+        "overwrite": true,
+        "path": "/home/nomad/server.hcl",
+        "contents": {
+          "compression": "gzip",
+          "source": "data:;base64,H4sIAAAAAAAC/4yOzWrrMBCF9/MUB921nSgE33ThTWnpE3RtZGvSGBRLjCamUPLuRTYthnZRCQSfzs+Md+oGnpQFLUyhasXKGqLCnR8FRdxd4pV3U7w6v75VlrkqFkPUj5PvnPdLzb5eriEK8a0LPHMo30/Pj68vhsj5mUXHzPgg4KKaimofDrVtTvW+tgdr8M/z2d2CIkVRHJtjQ4Ck4RfrT+9/AjLL+S+9J7oTFcjbdTYDV9pUfoUyy8yypHhyfWCP79NC5cYE9DFqVnGp4/fEg6KFpTt9BgAA//9LuRmoeAEAAA=="
+        }
       }
     ]
   },
   "systemd": {
     "units": [
       {
-        "contents": "[Unit]\nDescription=Initial System Setup\nAfter=systemd-machine-id-commit.service\nAfter=network-online.target\nBefore=zincati.service\n\n[Service]\nType=oneshot\nRemainAfterExit=yes\nExecStart=/usr/bin/sed -i 's/#DNSSEC=no/DNSSEC=yes/g' /etc/systemd/resolved.conf\nExecStart=/usr/bin/systemctl restart systemd-resolved\nExecStart=/usr/bin/rpm-ostree install firewalld qemu-guest-agent unzip curl \nExecStart=/usr/bin/rpm-ostree override remove cifs-utils samba-common-libs samba-client-libs libsmbclient libwbclient samba-common sssd-krb5-common sssd-ipa sssd-nfs-idmap sssd-ldap sssd-client sssd-ad sssd-common sssd-krb5 sssd-common-pac\nExecStart=/bin/systemctl --no-block reboot\n\n[Install]\nWantedBy=multi-user.target\n",
+        "contents": "[Unit]\nDescription=Initial System Setup\nAfter=systemd-machine-id-commit.service\nAfter=network-online.target\nBefore=zincati.service\n\n[Service]\nType=oneshot\nRemainAfterExit=yes\nExecStart=/usr/bin/systemctl restart systemd-resolved\nExecStart=/usr/bin/rpm-ostree install qemu-guest-agent\nExecStart=/bin/systemctl --no-block reboot\n\n[Install]\nWantedBy=multi-user.target\n",
         "enabled": true,
         "name": "postinst.service"
+      },
+      {
+        "contents": "[Unit]\nDescription=Install Nomad to system\nBefore=podman.service\n\n[Service]\nType=oneshot\nWorkingDirectory=/home\nExecStart=/usr/bin/curl -L -o nomad_1.5.6_linux_386.zip https://https://releases.hashicorp.com/nomad/1.5.6/nomad_1.5.6_linux_386.zip\nExecStart=/usr/bin/unzip nomad_1.5.6_linux_386.zip\nExecStart=/usr/bin/mv nomad /usr/local/bin/\nExecStart=/usr/bin/touch nomad \n\n\n[Install]\nWantedBy=multi-user.target\n",
+        "enabled": true,
+        "name": "instnomad.service"
+      },
+      {
+        "enabled": false,
+        "name": "docker.service"
       },
       {
         "enabled": true,
