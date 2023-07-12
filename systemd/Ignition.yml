@@ -43,7 +43,8 @@ systemd:
         ExecStart=/usr/bin/systemctl restart systemd-resolved
         ExecStart=/usr/bin/rpm-ostree install unzip
         ExecStart=/usr/bin/rpm-ostree override remove cifs-utils samba-common-libs samba-client-libs libsmbclient libwbclient samba-common sssd-krb5-common sssd-ipa sssd-nfs-idmap sssd-ldap sssd-client sssd-ad sssd-common sssd-krb5 sssd-common-pac
-        ExecStart=/bin/systemctl reboot
+        ExecStart=/usr/bin/systemctl disable systemd-resolved
+        ExecStart=/usr/bin/systemctl reboot
 
         [Install]
         WantedBy=multi-user.target
