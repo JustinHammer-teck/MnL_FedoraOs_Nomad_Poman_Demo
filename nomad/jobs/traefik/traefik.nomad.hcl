@@ -31,8 +31,23 @@ job "traefik" {
           "--entrypoints.web.address=:${NOMAD_PORT_http}",
           "--entrypoints.traefik.address=:${NOMAD_PORT_admin}",
           "--providers.nomad=true",
+          "--providers.nomad=true",
           "--providers.nomad.endpoint.address=http://[ip-of-server]:4646" ### IP to your nomad server 
         ]
+        volumes = [
+          "/home/eugene/nomad-srv-data/containers/traefik.toml:/etc/traefik/traefik.toml",
+        ]
+      }
+      service {
+        name = "traefik"
+
+        check {
+          name     = "alive"
+          type     = "tcp"
+          port     = "http"
+          interval = "10s"
+          timeout  = "2s"
+        }
       }
     }
   }
