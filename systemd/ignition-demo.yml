@@ -1,0 +1,103 @@
+variant: fcos
+version: 1.4.0
+passwd:
+  users:
+    - name: core
+      password_hash: $y$j9T$TpbM8GKVWJ7QhoMwvs.Gj0$CndddajuRyD4FFmZ1JfX0EG4pmjaq9pB000atjgtu28
+    - name: eugene
+      password_hash: $y$j9T$TpbM8GKVWJ7QhoMwvs.Gj0$CndddajuRyD4FFmZ1JfX0EG4pmjaq9pB000atjgtu28
+      ssh_authorized_keys:
+        - ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQDMES8LZ9z7Rl38/G9gMddRLJiSu9FoEKtu//rm60yEKXmEOh9l4/YsRwPbaqJmWLtElz6zreboxaakPK2TnzT24jA6TJdsWYno5yJB1YypNEAyEzqjNcDbHRY1YP1U2sE4DO2Uq8LLZPGsgppS85L4aIwCHjj0VxAp82jmosaK7Hijot8VqTcNrsEgO5GIF9ZHhNm4i5vzck79Jww9w1+0O2fTATi+mRXYNc4mJoG1FVN471sMtyvJIFmGKorzZ2tUNdpz0cQKtWoF51psmEOJ33pqOMAXNPOSWAmO4JfcS6K3BcrF2UenC8FMI+B2gA42LkPy8pMRqmjNDKHmvxD103qtisnsXgHpSH3NCImtvjK2vNGalzrrElNJdpRW+uHjiQDUm7WSPG6UtwJf/is0Sd6GCQ3ZHlUoE5DhH6pHeZMssrx8mbVaCFjaWO6GtcM9Q7Mpo03/1n1ecOTg8dpWvt25kFurtIuW+m8BtHVj/efmm91d02OkbYkoIBTHyTk=
+      groups:
+        - wheel
+        - sudo
+    - name: nomad
+      home_dir: /home/nomad
+      groups: # adds 'nomad' user to root group
+        - sudo
+        - wheel
+      shell: /bin/bash
+      password_hash: $y$j9T$TpbM8GKVWJ7QhoMwvs.Gj0$CndddajuRyD4FFmZ1JfX0EG4pmjaq9pB000atjgtu28
+      ssh_authorized_keys:
+        - ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQDMES8LZ9z7Rl38/G9gMddRLJiSu9FoEKtu//rm60yEKXmEOh9l4/YsRwPbaqJmWLtElz6zreboxaakPK2TnzT24jA6TJdsWYno5yJB1YypNEAyEzqjNcDbHRY1YP1U2sE4DO2Uq8LLZPGsgppS85L4aIwCHjj0VxAp82jmosaK7Hijot8VqTcNrsEgO5GIF9ZHhNm4i5vzck79Jww9w1+0O2fTATi+mRXYNc4mJoG1FVN471sMtyvJIFmGKorzZ2tUNdpz0cQKtWoF51psmEOJ33pqOMAXNPOSWAmO4JfcS6K3BcrF2UenC8FMI+B2gA42LkPy8pMRqmjNDKHmvxD103qtisnsXgHpSH3NCImtvjK2vNGalzrrElNJdpRW+uHjiQDUm7WSPG6UtwJf/is0Sd6GCQ3ZHlUoE5DhH6pHeZMssrx8mbVaCFjaWO6GtcM9Q7Mpo03/1n1ecOTg8dpWvt25kFurtIuW+m8BtHVj/efmm91d02OkbYkoIBTHyTk=
+systemd:
+  units:
+    - name: runhelloworld.service
+      enabled: true
+      contents: |
+        [Unit]
+        Description=Initial System Setup
+        After=network-online.target
+
+        [Service]
+        Type=oneshot
+        RemainAfterExit=yes
+        ExecStart=/usr/bin/podman run --name websrv3 -p 8080:80 -v /opt/src:/usr/share/nginx/html:Z -d docker.io/library/nginx:latest
+
+        [Install]
+        WantedBy=multi-user.target
+    - name: docker.service
+      enabled: false
+    - name: podman.service
+      enabled: true
+    - name: rpm-ostree-countme.timer
+      enabled: false
+      mask: true
+    - name: sshd.service
+      enabled: false
+    - name: sshd.socket
+      enabled: true
+    - name: firewalld.service
+      enabled: true
+storage:
+  files:
+    - path: /etc/ssh/sshd_config.d/20-enable-passwords.conf
+      mode: 0644
+      contents:
+        inline: |
+          # Fedora CoreOS disables SSH password login by default.
+          # Enable it.
+          # This file must sort before 40-disable-passwords.conf.
+          PasswordAuthentication yes
+    - path: /opt/src/index.html
+      overwrite: true
+      contents:
+        inline: |
+          <!DOCTYPE html>
+          <html>
+          <head>
+              <meta charset="UTF-8" />
+              <title>title</title>
+          </head>
+          <body>
+              <h1>Hello From The Other Side 2</h1>
+          </body>
+          </html>       
+    - path: /home/nomad/server.hcl
+      overwrite: true
+      contents:
+        inline: |
+          datacenter = "data-center-1"
+
+          data_dir  = "/home/nomad/nomad-srv-data"
+
+          bind_addr = "0.0.0.0"
+
+          log_level = "DEBUG"
+
+          advertise {
+            http = "192.168.0.124" #default port 4646
+            rpc = "192.168.0.124"  #default port 4647
+            serf = "192.168.0.124" #default port 4648
+          }
+
+          ports {
+            http = 4646
+            rpc  = 4647
+            serf = 4648
+          }
+
+          server {
+            enabled          = true
+            bootstrap_expect = 1
+          }
