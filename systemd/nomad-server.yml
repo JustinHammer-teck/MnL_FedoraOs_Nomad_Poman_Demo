@@ -1,0 +1,132 @@
+variant: fcos
+version: 1.4.0
+passwd:
+  users:
+    - name: core
+      password_hash: $y$j9T$TpbM8GKVWJ7QhoMwvs.Gj0$CndddajuRyD4FFmZ1JfX0EG4pmjaq9pB000atjgtu28
+    - name: eugene
+      password_hash: $y$j9T$TpbM8GKVWJ7QhoMwvs.Gj0$CndddajuRyD4FFmZ1JfX0EG4pmjaq9pB000atjgtu28
+      ssh_authorized_keys:
+        - ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQCq5xoqjdEe7USYG5Z/yGnQI/H9MS/7Uqp7JDPgaCi13sq0yiGVC3ntekU0KX6toR1iqMqCORCPSpGbThUvwTo097EacQTzhtg7vRfEmyU9u+FMjXmz/FsJC/J3Ej4M1rz3f+79DHBne6nyS3nByed0LnKAySXqSytdlzzhO5J/XzWu7z0WjU30BqIDwGA8GHakMr/0FoBHcGNiTUjkl9k47CzJioFieoqzbiyhvkO3gFp89cuhwDiaMo05aTPzD+DhQSdJKcmyXSzWVmHfACcw+a78uYxeYgXScKNoJxuIbB1mq7eHNtQsXCKP374tsyehMZ9c8+4KXL/iK4zBPXovRfETAbyovUOU5vRAlhwXdbYUQLnqVibXM5VfOhAgHJ5YmoeCG/h1k/g5dEqMjCfYfYzvRxNuaz/1rl2ZHCb6+0I+iRpJprmw+0Sv/GFuaQ9xmlHTflUk9aIou82iAU39CkAO4BFlC3bU71FxLS4r2dloTb2QUxh8SAjF4/6FK4U=
+      groups:
+        - wheel
+        - sudo
+    - name: nomad
+      home_dir: /home/nomad
+      groups: # adds 'nomad' user to root group
+        - sudo
+        - wheel
+      shell: /bin/bash
+      password_hash: $y$j9T$TpbM8GKVWJ7QhoMwvs.Gj0$CndddajuRyD4FFmZ1JfX0EG4pmjaq9pB000atjgtu28
+      ssh_authorized_keys:
+        - ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQCq5xoqjdEe7USYG5Z/yGnQI/H9MS/7Uqp7JDPgaCi13sq0yiGVC3ntekU0KX6toR1iqMqCORCPSpGbThUvwTo097EacQTzhtg7vRfEmyU9u+FMjXmz/FsJC/J3Ej4M1rz3f+79DHBne6nyS3nByed0LnKAySXqSytdlzzhO5J/XzWu7z0WjU30BqIDwGA8GHakMr/0FoBHcGNiTUjkl9k47CzJioFieoqzbiyhvkO3gFp89cuhwDiaMo05aTPzD+DhQSdJKcmyXSzWVmHfACcw+a78uYxeYgXScKNoJxuIbB1mq7eHNtQsXCKP374tsyehMZ9c8+4KXL/iK4zBPXovRfETAbyovUOU5vRAlhwXdbYUQLnqVibXM5VfOhAgHJ5YmoeCG/h1k/g5dEqMjCfYfYzvRxNuaz/1rl2ZHCb6+0I+iRpJprmw+0Sv/GFuaQ9xmlHTflUk9aIou82iAU39CkAO4BFlC3bU71FxLS4r2dloTb2QUxh8SAjF4/6FK4U=
+systemd:
+  units:
+    - name: instnomad.service
+      enabled: true
+      contents: |
+        [Unit]
+        Description=Install Nomad to system
+        After=network-online.target
+        
+        [Service]
+        Type=oneshot
+        WorkingDirectory=/home/nomad
+        ExecStart=/usr/bin/curl -L -o nomad https://homelabs.blob.core.windows.net/hashicorp-release/nomad
+        ExecStart=/usr/bin/mv nomad /usr/local/bin/
+        ExecStart=/bin/chown nomad /usr/local/bin/nomad
+        ExecStart=/bin/chmod 770 /usr/local/bin/nomad
+        
+        [Install]
+        WantedBy=multi-user.target
+    - name: nomad.service
+      enabled: true
+      contents: |
+        [Unit]
+        Description=Nomad
+        Documentation=https://www.nomadproject.io/docs/
+        Wants=network-online.target
+        After=network-online.target
+        After=instnomad.service
+        ConditionPathExists=/usr/local/bin/nomad
+
+        # When using Nomad with Consul it is not necessary to start Consul first. These
+        # lines start Consul before Nomad as an optimization to avoid Nomad logging
+        # that Consul is unavailable at startup.
+        #Wants=consul.service
+        #After=consul.service
+
+        [Service]
+        RemainAfterExit=yes
+        # Nomad server should be run as the nomad user. Nomad clients
+        # should be run as root
+        User=nomad
+        WorkingDirectory=/home/nomad
+        ExecReload=/bin/kill -HUP $MAINPID
+        ExecStart=/bin/bash -c '/usr/local/bin/nomad agent -config server.hcl'
+        KillMode=process
+        KillSignal=SIGINT
+        LimitNOFILE=65536
+        LimitNPROC=infinity
+        Restart=on-failure
+        RestartSec=2
+
+        ## Configure unit start rate limiting. Units which are started more than
+        ## *burst* times within an *interval* time span are not permitted to start any
+        ## more. Use `StartLimitIntervalSec` or `StartLimitInterval` (depending on
+        ## systemd version) to configure the checking interval and `StartLimitBurst`
+        ## to configure how many starts per interval are allowed. The values in the
+        ## commented lines are defaults.
+
+        # StartLimitBurst = 5
+
+        ## StartLimitIntervalSec is used for systemd versions >= 230
+        # StartLimitIntervalSec = 10s
+
+        ## StartLimitInterval is used for systemd versions < 230
+        # StartLimitInterval = 10s
+
+        TasksMax=infinity
+        OOMScoreAdjust=-1000
+
+        [Install]
+        WantedBy=multi-user.target
+    - name: docker.service
+      enabled: false
+    - name: podman.service
+      enabled: true
+    - name: sshd.service
+      enabled: false
+    - name: sshd.socket
+      enabled: true
+    - name: firewalld.service
+      enabled: true
+storage:
+  files:
+    - path: /etc/ssh/sshd_config.d/20-enable-passwords.conf
+      mode: 0644
+      contents:
+        inline: |
+          # Fedora CoreOS disables SSH password login by default.
+          # Enable it.
+          # This file must sort before 40-disable-passwords.conf.
+          PasswordAuthentication yes
+    - path: /home/nomad/server.hcl
+      overwrite: true
+      contents:
+        inline: |
+          datacenter = "data-center-1"
+          data_dir  = "/home/nomad/nomad-srv-data"
+          bind_addr = "0.0.0.0"
+          log_level = "DEBUG"
+          
+          ports {
+            http = 4646
+            rpc  = 4647
+            serf = 4648
+          }
+
+          server {
+            enabled          = true
+            bootstrap_expect = 1
+          }
