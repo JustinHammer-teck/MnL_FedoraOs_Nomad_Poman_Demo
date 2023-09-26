@@ -1,0 +1,91 @@
+{
+  "ignition": {
+    "version": "3.3.0"
+  },
+  "passwd": {
+    "users": [
+      {
+        "name": "core",
+        "passwordHash": "$y$j9T$TpbM8GKVWJ7QhoMwvs.Gj0$CndddajuRyD4FFmZ1JfX0EG4pmjaq9pB000atjgtu28"
+      },
+      {
+        "groups": [
+          "wheel",
+          "sudo"
+        ],
+        "name": "eugene",
+        "passwordHash": "$y$j9T$TpbM8GKVWJ7QhoMwvs.Gj0$CndddajuRyD4FFmZ1JfX0EG4pmjaq9pB000atjgtu28",
+        "sshAuthorizedKeys": [
+          "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQCq5xoqjdEe7USYG5Z/yGnQI/H9MS/7Uqp7JDPgaCi13sq0yiGVC3ntekU0KX6toR1iqMqCORCPSpGbThUvwTo097EacQTzhtg7vRfEmyU9u+FMjXmz/FsJC/J3Ej4M1rz3f+79DHBne6nyS3nByed0LnKAySXqSytdlzzhO5J/XzWu7z0WjU30BqIDwGA8GHakMr/0FoBHcGNiTUjkl9k47CzJioFieoqzbiyhvkO3gFp89cuhwDiaMo05aTPzD+DhQSdJKcmyXSzWVmHfACcw+a78uYxeYgXScKNoJxuIbB1mq7eHNtQsXCKP374tsyehMZ9c8+4KXL/iK4zBPXovRfETAbyovUOU5vRAlhwXdbYUQLnqVibXM5VfOhAgHJ5YmoeCG/h1k/g5dEqMjCfYfYzvRxNuaz/1rl2ZHCb6+0I+iRpJprmw+0Sv/GFuaQ9xmlHTflUk9aIou82iAU39CkAO4BFlC3bU71FxLS4r2dloTb2QUxh8SAjF4/6FK4U="
+        ]
+      },
+      {
+        "groups": [
+          "sudo",
+          "wheel"
+        ],
+        "homeDir": "/home/nomad",
+        "name": "nomad",
+        "passwordHash": "$y$j9T$TpbM8GKVWJ7QhoMwvs.Gj0$CndddajuRyD4FFmZ1JfX0EG4pmjaq9pB000atjgtu28",
+        "sshAuthorizedKeys": [
+          "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQCq5xoqjdEe7USYG5Z/yGnQI/H9MS/7Uqp7JDPgaCi13sq0yiGVC3ntekU0KX6toR1iqMqCORCPSpGbThUvwTo097EacQTzhtg7vRfEmyU9u+FMjXmz/FsJC/J3Ej4M1rz3f+79DHBne6nyS3nByed0LnKAySXqSytdlzzhO5J/XzWu7z0WjU30BqIDwGA8GHakMr/0FoBHcGNiTUjkl9k47CzJioFieoqzbiyhvkO3gFp89cuhwDiaMo05aTPzD+DhQSdJKcmyXSzWVmHfACcw+a78uYxeYgXScKNoJxuIbB1mq7eHNtQsXCKP374tsyehMZ9c8+4KXL/iK4zBPXovRfETAbyovUOU5vRAlhwXdbYUQLnqVibXM5VfOhAgHJ5YmoeCG/h1k/g5dEqMjCfYfYzvRxNuaz/1rl2ZHCb6+0I+iRpJprmw+0Sv/GFuaQ9xmlHTflUk9aIou82iAU39CkAO4BFlC3bU71FxLS4r2dloTb2QUxh8SAjF4/6FK4U="
+        ],
+        "shell": "/bin/bash"
+      }
+    ]
+  },
+  "storage": {
+    "files": [
+      {
+        "path": "/etc/ssh/sshd_config.d/20-enable-passwords.conf",
+        "contents": {
+          "compression": "",
+          "source": "data:,%23%20Fedora%20CoreOS%20disables%20SSH%20password%20login%20by%20default.%0A%23%20Enable%20it.%0A%23%20This%20file%20must%20sort%20before%2040-disable-passwords.conf.%0APasswordAuthentication%20yes%0A"
+        },
+        "mode": 420
+      },
+      {
+        "overwrite": true,
+        "path": "/home/nomad/server.hcl",
+        "contents": {
+          "compression": "gzip",
+          "source": "data:;base64,H4sIAAAAAAAC/zzMzUrEMBAH8Ps8xZ/c47qwrF5yEcUn8BzSZrSFNAmTsQjSd5c04AwM/OYrBg0zZ2WBg+myg/ZqqNPHVdBnl6VsfMllC3FU22S3fcXQtOboQ4znk8eHMw2l8uUT75x69/Xt5ePdENUi2vBLwKJa4XC73+4ESJ0x9ERAY/kceqaDqLHsLOcV5zAljvgPB5VvJmAqRZtKqJ5/Ks8Khysd9BcAAP//61n91OIAAAA="
+        }
+      }
+    ]
+  },
+  "systemd": {
+    "units": [
+      {
+        "contents": "[Unit]\nDescription=Install Nomad to system\nAfter=network-online.target\n\n[Service]\nType=oneshot\nWorkingDirectory=/home/nomad\nExecStart=/usr/bin/curl -L -o nomad https://homelabs.blob.core.windows.net/hashicorp-release/nomad\nExecStart=/usr/bin/mv nomad /usr/local/bin/\nExecStart=/bin/chown nomad /usr/local/bin/nomad\nExecStart=/bin/chmod 770 /usr/local/bin/nomad\n\n[Install]\nWantedBy=multi-user.target\n",
+        "enabled": true,
+        "name": "instnomad.service"
+      },
+      {
+        "contents": "[Unit]\nDescription=Nomad\nDocumentation=https://www.nomadproject.io/docs/\nWants=network-online.target\nAfter=network-online.target\nAfter=instnomad.service\nConditionPathExists=/usr/local/bin/nomad\n\n# When using Nomad with Consul it is not necessary to start Consul first. These\n# lines start Consul before Nomad as an optimization to avoid Nomad logging\n# that Consul is unavailable at startup.\n#Wants=consul.service\n#After=consul.service\n\n[Service]\nRemainAfterExit=yes\n# Nomad server should be run as the nomad user. Nomad clients\n# should be run as root\nUser=nomad\nWorkingDirectory=/home/nomad\nExecReload=/bin/kill -HUP $MAINPID\nExecStart=/bin/bash -c '/usr/local/bin/nomad agent -config server.hcl'\nKillMode=process\nKillSignal=SIGINT\nLimitNOFILE=65536\nLimitNPROC=infinity\nRestart=on-failure\nRestartSec=2\n\n## Configure unit start rate limiting. Units which are started more than\n## *burst* times within an *interval* time span are not permitted to start any\n## more. Use `StartLimitIntervalSec` or `StartLimitInterval` (depending on\n## systemd version) to configure the checking interval and `StartLimitBurst`\n## to configure how many starts per interval are allowed. The values in the\n## commented lines are defaults.\n\n# StartLimitBurst = 5\n\n## StartLimitIntervalSec is used for systemd versions \u003e= 230\n# StartLimitIntervalSec = 10s\n\n## StartLimitInterval is used for systemd versions \u003c 230\n# StartLimitInterval = 10s\n\nTasksMax=infinity\nOOMScoreAdjust=-1000\n\n[Install]\nWantedBy=multi-user.target\n",
+        "enabled": true,
+        "name": "nomad.service"
+      },
+      {
+        "enabled": false,
+        "name": "docker.service"
+      },
+      {
+        "enabled": true,
+        "name": "podman.service"
+      },
+      {
+        "enabled": false,
+        "name": "sshd.service"
+      },
+      {
+        "enabled": true,
+        "name": "sshd.socket"
+      },
+      {
+        "enabled": true,
+        "name": "firewalld.service"
+      }
+    ]
+  }
+}

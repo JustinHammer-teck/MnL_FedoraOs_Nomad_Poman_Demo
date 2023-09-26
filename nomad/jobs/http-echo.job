@@ -5,6 +5,7 @@ job "http-echo-test" {
         network {
             port "http" {}
         }
+
         task "server" {
 
             driver = "podman"

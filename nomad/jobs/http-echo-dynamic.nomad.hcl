@@ -1,8 +1,13 @@
 job "http-echo-dynamic-service" {
   datacenters = ["data-center-1"]
 
+  update {
+    max_parallel = 1
+    healthy_deadline = "3m"
+  }
+
   group "echo" {
-    count = 5
+    count = 1
     task "server" {
       driver = "podman"
 
@@ -17,7 +22,6 @@ job "http-echo-dynamic-service" {
 
       resources {
         network {
-          mbits = 10
           port "http" {}
         }
       }
@@ -25,12 +29,6 @@ job "http-echo-dynamic-service" {
       service {
         name = "http-echo"
         port = "http"
-
-        tags = [
-          "rocky",
-          "urlprefix-/http-echo",
-        ]
-
         check {
           type     = "http"
           path     = "/health"

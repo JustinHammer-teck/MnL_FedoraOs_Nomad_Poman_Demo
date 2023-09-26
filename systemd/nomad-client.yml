@@ -117,7 +117,7 @@ storage:
           # Enable it.
           # This file must sort before 40-disable-passwords.conf.
           PasswordAuthentication yes
-    - path: /home/nomad/server.hcl
+    - path: /home/nomad/client.hcl
       overwrite: true
       contents:
         inline: |
